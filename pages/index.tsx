@@ -1,10 +1,14 @@
-import type { NextPage } from "next";
+
 import Head from 'next/head'
 import Header from '../components/Header'
 import Banner from '../components/Banner'
 import Row from '../components/Row'
+import Modal from '../components/Modal'
 import requests from "../utils/requests";
 import { Movie } from "@/typings";
+import useAuth from "@/hooks/userAuth";
+import { modalState } from "@/atoms/modalAtom";
+import { useRecoilValue } from 'recoil'
 
 interface Props {
   netflixOriginals: Movie[]
@@ -18,8 +22,6 @@ interface Props {
   // products: Product[]
 }
 
-
-
 const Home = ({
   netflixOriginals,
   actionMovies,
@@ -29,6 +31,13 @@ const Home = ({
   romanceMovies,
   topRated,
   trendingNow }: Props) => {
+  const { loading } = useAuth()
+  const showModal = useRecoilValue(modalState)
+
+
+
+  if (loading) return null
+
   return (
     <div className="relative h-screen bg-gradient-to-b lg:h[140vh]">
       <Head>
@@ -38,10 +47,10 @@ const Home = ({
 
       <Header />
       <main className="relative pl-4 pb-24 lg:space-y-24 lg:pl-16">
-        <Banner netflixOriginals={netflixOriginals}/>
+        <Banner netflixOriginals={netflixOriginals} />
         <section className="md:space-y-24">
           <Row title="Trending Now" movies={trendingNow} />
-          <Row title="Top Rated" movies={topRated}/>
+          <Row title="Top Rated" movies={topRated} />
           {/* <Row title="Action Thrillers" movies={actionMovies} /> */}
 
           <Row title="Comedies" movies={comedyMovies} />
@@ -51,7 +60,8 @@ const Home = ({
         </section>
       </main>
 
-      {/* Modal */}
+      {showModal && <Modal />}
+
     </div>
   )
 }
